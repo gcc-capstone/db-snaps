@@ -194,14 +194,14 @@ You are cloning the existing shared team repository.
 
 The team is finished when:
 
-- [ ] one designated student has repository Admin access
-- [ ] the local repository was initialized from WSL/Linux
-- [ ] the initial `main` branch was pushed to the provided GitHub repository
-- [ ] `main` is protected by the required branch rule/ruleset
+- [x] one designated student has repository Admin access
+- [x] the local repository was initialized from WSL/Linux
+- [x] the initial `main` branch was pushed to the provided GitHub repository
+- [x] `main` is protected by the required branch rule/ruleset
 - [ ] all remaining team members have been invited to the repository
-- [ ] `requirements/T01-team-repository-setup.md` is present
+- [x] `requirements/T01-team-repository-setup.md` is present
 - [ ] `requirements/T05-report-draft1.md` is present
-- [ ] `docs/style-guide.md` is present
+- [x] `docs/style-guide.md` is present
 - [ ] every remaining team member has cloned the shared repository into WSL/Linux
 
 ## Grading
