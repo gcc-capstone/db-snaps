@@ -1,0 +1,82 @@
+/*
+ * Motus design tokens.
+ * Navy and Steel Blue come from the logo; Signal Amber is a warm accent
+ * used sparingly to suggest motion (active states, highlights).
+ */
+:root {
+  --color-navy: #0b2545;
+  --color-steel: #3e6491;
+  --color-amber: #f2a541;
+  --color-mist: #e6edf5;
+  --color-paper: #f7f9fc;
+  --color-ink: #1c2430;
+  --color-slate: #5b6777;
+  --color-border: #c9d3df;
+  --color-success: #2e7d4f;
+  --color-danger: #b3261e;
+  --color-white: #ffffff;
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  --radius: 6px;
+  --shadow: 0 1px 2px rgb(11 37 69 / 0.06), 0 4px 12px rgb(11 37 69 / 0.08);
+
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-ink);
+  background: var(--color-paper);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 var(--space-3);
+  color: var(--color-navy);
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+p {
+  margin: 0 0 var(--space-3);
+}
+
+a {
+  color: var(--color-steel);
+}
+
+a:hover {
+  color: var(--color-navy);
+}

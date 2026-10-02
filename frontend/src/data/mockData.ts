@@ -1,0 +1,156 @@
+// Mock data for the dummy UI. Nothing here talks to a real database or API.
+
+export type SnapshotFrequency = 'daily' | 'weekly' | 'monthly'
+
+export type DataPoint = {
+  label: string
+  value: number
+}
+
+export type Analysis = {
+  id: string
+  typeId: string
+  title: string
+  unit: '%' | ''
+  points: DataPoint[]
+}
+
+export type TrackedDatabase = {
+  id: string
+  name: string
+  engine: string
+  host: string
+  username: string
+  frequency: SnapshotFrequency
+  snapshotCount: number
+  lastSnapshotAt: string | null
+  analyses: Analysis[]
+}
+
+// Details entered on the New Database page, before settings are chosen.
+export type DatabaseDraft = Pick<TrackedDatabase, 'name' | 'engine' | 'host' | 'username'>
+
+export type AnalysisType = {
+  id: string
+  name: string
+  description: string
+  unit: '%' | ''
+}
+
+export const frequencyLabels: Record<SnapshotFrequency, string> = {
+  daily: 'Daily',
+  weekly: 'Weekly',
+  monthly: 'Monthly',
+}
+
+export const analysisTypes: AnalysisType[] = [
+  {
+    id: 'retention',
+    name: 'Retention Rate',
+    description: 'Percent of records whose value in a column stays the same between snapshots.',
+    unit: '%',
+  },
+  {
+    id: 'record-count',
+    name: 'Record Count',
+    description: 'Total number of records in a table at each snapshot.',
+    unit: '',
+  },
+  {
+    id: 'change-count',
+    name: 'Changes per Period',
+    description: 'Number of records whose tracked columns changed since the previous snapshot.',
+    unit: '',
+  },
+  {
+    id: 'category-share',
+    name: 'Category Share',
+    description: 'Percent of records that have a selected value, such as a specific major.',
+    unit: '%',
+  },
+]
+
+const years = ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026']
+
+function series(values: number[]): DataPoint[] {
+  return values.map((value, i) => ({ label: years[i], value }))
+}
+
+// Generates believable sample data for a newly added analysis.
+export function sampleAnalysis(type: AnalysisType, id: string): Analysis {
+  const seed = [...id].reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  const base = type.unit === '%' ? 30 + (seed % 40) : 500 + (seed % 2000)
+  const step = type.unit === '%' ? 4 : base * 0.04
+  const values = years.map((_, i) => Math.max(0, Math.round(base + Math.sin(seed + i) * step * 2 + i * step * 0.5)))
+  return { id, typeId: type.id, title: type.name, unit: type.unit, points: series(values) }
+}
+
+export const initialDatabases: TrackedDatabase[] = [
+  {
+    id: 'gcc-students',
+    name: 'GCC Student Database',
+    engine: 'PostgreSQL',
+    host: 'students.db.gcc.edu',
+    username: 'motus_reader',
+    frequency: 'monthly',
+    snapshotCount: 50,
+    lastSnapshotAt: '2026-09-01T06:00:00Z',
+    analyses: [
+      {
+        id: 'cs-retention',
+        typeId: 'retention',
+        title: 'CS Retention Rate',
+        unit: '%',
+        points: series([41, 38, 33, 29, 24, 20, 35, 33]),
+      },
+      {
+        id: 'enrollment',
+        typeId: 'record-count',
+        title: 'Total Students',
+        unit: '',
+        points: series([2390, 2310, 2295, 2380, 2425, 2470, 2488, 2512]),
+      },
+      {
+        id: 'major-changes',
+        typeId: 'change-count',
+        title: 'Major Changes per Year',
+        unit: '',
+        points: series([142, 158, 171, 166, 190, 203, 176, 184]),
+      },
+      {
+        id: 'business-analytics-share',
+        typeId: 'category-share',
+        title: 'Students Leaving CS for Business Analytics',
+        unit: '%',
+        points: series([31, 35, 38, 41, 44, 47, 50, 50]),
+      },
+    ],
+  },
+  {
+    id: 'partner-college-a',
+    name: 'Partner College A',
+    engine: 'SQL Server',
+    host: 'sis.partner-a.edu',
+    username: 'readonly',
+    frequency: 'weekly',
+    snapshotCount: 13,
+    lastSnapshotAt: '2026-09-28T06:00:00Z',
+    analyses: [
+      {
+        id: 'partner-a-count',
+        typeId: 'record-count',
+        title: 'Total Students',
+        unit: '',
+        points: series([3980, 4010, 4055, 4030, 4090, 4120, 4101, 4136]),
+      },
+    ],
+  },
+]
+
+export function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+export function formatValue(value: number, unit: Analysis['unit']): string {
+  return `${value.toLocaleString()}${unit}`
+}
