@@ -12,6 +12,8 @@
   --color-ink: #1c2430;
   --color-slate: #5b6777;
   --color-border: #c9d3df;
+  --color-success: #2e7d4f;
+  --color-danger: #b3261e;
   --color-white: #ffffff;
 
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -69,4 +71,12 @@ h3 {
 
 p {
   margin: 0 0 var(--space-3);
+}
+
+a {
+  color: var(--color-steel);
+}
+
+a:hover {
+  color: var(--color-navy);
 }

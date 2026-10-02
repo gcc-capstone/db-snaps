@@ -8,6 +8,8 @@ const colors = [
   { name: 'Paper', token: '--color-paper', value: '#F7F9FC', use: 'Page background' },
   { name: 'Ink', token: '--color-ink', value: '#1C2430', use: 'Body text' },
   { name: 'Slate', token: '--color-slate', value: '#5B6777', use: 'Muted text and labels' },
+  { name: 'Success', token: '--color-success', value: '#2E7D4F', use: 'Confirmation messages only' },
+  { name: 'Danger', token: '--color-danger', value: '#B3261E', use: 'Errors and destructive actions only' },
 ]
 
 function StyleReference() {
