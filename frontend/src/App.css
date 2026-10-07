@@ -636,7 +636,7 @@ select:focus-visible,
 
 .sql-editor {
   width: 100%;
-  min-height: 200px;
+  min-height: 120px;
   padding: var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -674,34 +674,43 @@ select:focus-visible,
   margin-top: var(--space-2);
 }
 
-/* Assistant chat: one box, messages on top, input bar attached below */
-.chat {
+/* Assistant: lives inside the query panel, no box of its own */
+.btn-sm {
+  padding: 2px var(--space-3);
+  font-size: 0.875rem;
+}
+
+.form-compact {
+  gap: var(--space-3);
+}
+
+.assistant {
   display: flex;
   flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   overflow: hidden;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background: var(--color-white);
-  box-shadow: var(--shadow);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .chat-log {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  min-height: 240px;
-  max-height: 480px;
+  gap: var(--space-2);
+  max-height: 360px;
   overflow-y: auto;
-  padding: var(--space-3);
-  background: var(--color-paper);
 }
 
-.chat-empty,
 .chat-typing {
   margin: 0;
-}
-
-.chat-typing {
   font-style: italic;
 }
 
@@ -721,8 +730,7 @@ select:focus-visible,
 
 .chat-msg-assistant {
   align-self: flex-start;
-  border: 1px solid var(--color-border);
-  background: var(--color-white);
+  background: var(--color-mist);
 }
 
 .chat-msg-user {
@@ -734,8 +742,6 @@ select:focus-visible,
 .chat-input {
   display: flex;
   gap: var(--space-2);
-  padding: var(--space-2);
-  border-top: 1px solid var(--color-border);
 }
 
 .chat-input input {

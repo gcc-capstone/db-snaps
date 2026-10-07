@@ -58,22 +58,23 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
       </div>
 
       <div className="stack">
-        <form className="panel form" onSubmit={handleCreate}>
-          <h2>Write your own query</h2>
+        <form className="panel form form-compact" onSubmit={handleCreate}>
+          <SqlAssistant onUseQuery={handleUseQuery} />
+
+          <h2>Write your query</h2>
           <label className="field field-wide">
-            <span className="field-label">SQL query</span>
+            <span className="visually-hidden">SQL query</span>
             <textarea
               ref={editorRef}
               className="sql-editor"
-              rows={10}
+              rows={7}
               spellCheck={false}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={'SELECT snapshot_year AS label,\n       COUNT(*) AS value\nFROM students\nGROUP BY snapshot_year\nORDER BY snapshot_year;'}
             />
             <span className="muted small">
-              Return two columns: a label (such as the year) and a numeric value. Only read-only SELECT queries are allowed.
-              Not sure how to write it? Ask the assistant below.
+              Return a label column and a numeric value column. Read-only SELECT queries only.
             </span>
           </label>
 
@@ -89,12 +90,12 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
           </details>
 
           <div className="row">
-            <button type="button" className="btn btn-secondary" onClick={handleTest} disabled={!trimmedQuery}>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={handleTest} disabled={!trimmedQuery}>
               Test Query
             </button>
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-sm"
               onClick={() => {
                 setQuery('')
                 setTested(null)
@@ -146,8 +147,6 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
           </div>
           {!passed && <p className="muted small">Test your query successfully to enable Create Analysis.</p>}
         </form>
-
-        <SqlAssistant onUseQuery={handleUseQuery} />
       </div>
     </main>
   )

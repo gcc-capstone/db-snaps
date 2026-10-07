@@ -26,7 +26,7 @@ export function validateSql(raw: string): SqlValidation {
 
   if (code.includes(';')) return fail('Only one statement is allowed. Remove the extra statement after the semicolon.')
 
-  const words = code.toLowerCase().match(/[a-z_]+/g) ?? []
+  const words: string[] = code.toLowerCase().match(/[a-z_]+/g) ?? []
   const forbidden = forbiddenWords.find((word) => words.includes(word))
   if (forbidden) return fail(`Queries must be read-only. "${forbidden.toUpperCase()}" is not allowed.`)
 
