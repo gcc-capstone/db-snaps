@@ -54,7 +54,7 @@ function SqlAssistant({ onUseQuery }: { onUseQuery: (sql: string) => void }) {
                   <pre className="sql-block">{message.sql}</pre>
                   <button
                     type="button"
-                    className={usedId === message.id ? 'btn btn-secondary' : 'btn btn-primary'}
+                    className={usedId === message.id ? 'btn btn-secondary btn-sm' : 'btn btn-primary btn-sm'}
                     onClick={() => {
                       setUsedId(message.id)
                       onUseQuery(message.sql!)
@@ -66,7 +66,16 @@ function SqlAssistant({ onUseQuery }: { onUseQuery: (sql: string) => void }) {
               )}
             </div>
           ))}
-          {thinking && <p className="muted small chat-typing">Writing a query…</p>}
+          {thinking && (
+            <div className="chat-msg chat-msg-assistant" role="status">
+              <span className="visually-hidden">The assistant is writing a query</span>
+              <span className="typing" aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </span>
+            </div>
+          )}
         </div>
       )}
 

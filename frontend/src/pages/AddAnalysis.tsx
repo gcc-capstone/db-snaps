@@ -2,7 +2,7 @@ import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import type { DatabaseActions } from '../App'
 import SqlAssistant from '../components/SqlAssistant'
-import { customSqlType, formatValue, sampleAnalysis } from '../data/mockData'
+import { customSqlType, sampleAnalysis } from '../data/mockData'
 import { schema, validateSql, type SqlValidation } from '../data/sqlTools'
 import NotFound from './NotFound'
 
@@ -21,11 +21,10 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
   const trimmedQuery = query.trim()
   const testIsCurrent = tested !== null && tested.query === trimmedQuery
   const passed = testIsCurrent && tested.result.ok
-  const preview = passed ? sampleAnalysis(customSqlType, trimmedQuery).points.slice(-5) : []
 
   const handleTest = () => setTested({ query: trimmedQuery, result: validateSql(trimmedQuery) })
 
-  // Called by the assistant: put its query in the editor and bring the editor into view.
+  // Called by the assistant: put its query in the editor and focus it.
   const handleUseQuery = (sql: string) => {
     setQuery(sql)
     setTested(null)
@@ -38,7 +37,7 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
     if (!passed) return
     const analysis = {
       ...sampleAnalysis(customSqlType, `${customSqlType.id}-${Date.now()}`),
-      // Same seed as the test preview, so the card matches what the tester just saw.
+      // Seeded by the query text, so the same query always shows the same sample data.
       points: sampleAnalysis(customSqlType, trimmedQuery).points,
       title: title.trim() || 'Custom Query',
       query: trimmedQuery,
@@ -106,30 +105,8 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
             </button>
           </div>
 
-          {testIsCurrent && tested.result.ok && (
-            <>
-              <p className="message message-success">Query is valid. Preview of the last {preview.length} results:</p>
-              <div className="table-wrap">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>label</th>
-                      <th>value</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {preview.map((point) => (
-                      <tr key={point.label}>
-                        <td>{point.label}</td>
-                        <td>{formatValue(point.value, '')}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-          {testIsCurrent && !tested.result.ok && <p className="message message-error">{tested.result.error}</p>}
+          {testIsCurrent && tested.result.ok && <p className="message message-success">Test succeeded.</p>}
+          {testIsCurrent && !tested.result.ok && <p className="message message-error">Test failed. {tested.result.error}</p>}
           {tested && !testIsCurrent && (
             <p className="muted small">The query changed. Test it again to enable Create Analysis.</p>
           )}
