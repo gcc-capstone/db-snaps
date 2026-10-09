@@ -9,11 +9,14 @@ Routing uses React Router (`src/App.tsx`). Pages:
 - `/` — home: list of databases, with a button to add a new one
 - `/databases/new` — new database: name, connection string, credentials, Test Connection and Create
 - `/databases/new/settings` — settings for the new database (snapshot frequency; table/column selection is a placeholder); saving creates the database and opens its dashboard
-- `/databases/:databaseId` — database dashboard: analysis cards, Add Analysis, and Settings
+- `/databases/:databaseId` — database dashboard: one card per analysis
 - `/databases/:databaseId/settings` — the same settings page for an existing database
 - `/databases/:databaseId/analyses/new` — choose an analysis type; creates a new card on the dashboard
 - `/databases/:databaseId/analyses/:analysisId` — closer look at one analysis: chart and data table
+- `/databases/:databaseId/snapshots` — snapshot history: filterable table with per-table row counts, and failed snapshots shown with their error
 - `/style` — style reference for colors, typography, spacing, and controls
+
+Every page under `/databases/:databaseId` is rendered inside `DatabaseLayout`, which keeps the left sidebar (navigation and a fake Take Snapshot Now button) in place while the page changes.
 
 Design tokens live as CSS custom properties in `src/index.css`; shared component styles are in `src/App.css`.
 

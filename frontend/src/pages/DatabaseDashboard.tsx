@@ -2,9 +2,7 @@ import { Link, useParams } from 'react-router'
 import Sparkline from '../components/Sparkline'
 import {
   analysisTypes,
-  formatDate,
   formatValue,
-  frequencyLabels,
   type Analysis,
   type TrackedDatabase,
 } from '../data/mockData'
@@ -18,21 +16,13 @@ function DatabaseDashboard({ databases }: { databases: TrackedDatabase[] }) {
 
   return (
     <main className="page">
+      <div className="page-header page-header-spaced">
       <div className="page-header">
         <div>
           <p className="eyebrow">{database.engine} · {database.host}</p>
           <h1>{database.name}</h1>
         </div>
-        <div className="row">
-          <Link to="settings" className="btn btn-secondary">Settings</Link>
-          <Link to="analyses/new" className="btn btn-primary">Add Analysis</Link>
-        </div>
       </div>
-
-      <p className="muted summary-line">
-        {database.snapshotCount} snapshots · {frequencyLabels[database.frequency]} schedule · Last snapshot{' '}
-        {database.lastSnapshotAt ? formatDate(database.lastSnapshotAt) : 'not taken yet'}
-      </p>
 
       {database.analyses.length === 0 ? (
         <div className="panel empty-state">

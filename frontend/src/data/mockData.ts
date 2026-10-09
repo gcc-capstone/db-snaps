@@ -21,6 +21,19 @@ export type Analysis = {
   query?: string
 }
 
+export type Snapshot = {
+  id: string
+  number: number
+  takenAt: string
+  trigger: 'scheduled' | 'manual'
+  status: 'complete' | 'failed'
+  tables: { table: string; rows: number }[]
+  rows: number
+  sizeMb: number
+  durationSec: number
+  error?: string
+}
+
 export type TrackedDatabase = {
   id: string
   name: string
@@ -33,6 +46,8 @@ export type TrackedDatabase = {
   snapshotCount: number
   lastSnapshotAt: string | null
   analyses: Analysis[]
+  // Only set once a snapshot is taken by hand; otherwise history is generated (see snapshotData.ts).
+  snapshots?: Snapshot[]
 }
 
 // Details entered on the New Database page, before settings are chosen.

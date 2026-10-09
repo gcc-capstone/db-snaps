@@ -924,6 +924,334 @@ select:focus-visible,
   opacity: 0.5;
 }
 
+/* ---- Database shell: persistent left sidebar, snapshots table ---- */
+:root {
+  --nav-height: 64px;
+  --sidebar-width: 248px;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* The top bar stays in view so the sidebar can sit directly under it. (The style-guide example keeps its own look.) */
+.nav:not(.nav-example) {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  flex-wrap: nowrap;
+  height: var(--nav-height);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.db-shell {
+  display: flex;
+  align-items: flex-start;
+}
+
+.db-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.db-content .page {
+  max-width: 1040px;
+}
+
+/* Sidebar: locked to the left edge, full height under the top bar, scrolls on its own if needed */
+.sidebar {
+  position: sticky;
+  top: var(--nav-height);
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--nav-height));
+  padding: var(--space-4) var(--space-3) var(--space-3);
+  overflow-y: auto;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+  background: var(--color-navy);
+  color: var(--color-mist);
+}
+
+.sidebar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: var(--color-white);
+}
+
+.sidebar a:focus-visible,
+.sidebar-action:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 2px;
+}
+
+.sidebar-back {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.sidebar-back:hover {
+  opacity: 1;
+}
+
+.sidebar-db {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.sidebar-db-name {
+  color: var(--color-white);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sidebar-db-engine,
+.sidebar-label {
+  color: rgb(230 237 245 / 0.65);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sidebar-db-host {
+  color: rgb(230 237 245 / 0.85);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.sidebar-link:hover {
+  background: rgb(255 255 255 / 0.06);
+}
+
+.sidebar-link-active,
+.sidebar-link-active:hover {
+  border-left-color: var(--color-amber);
+  background: rgb(255 255 255 / 0.1);
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+.sidebar-link svg {
+  flex: none;
+  opacity: 0.8;
+}
+
+.sidebar-link-active svg {
+  color: var(--color-amber);
+  opacity: 1;
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.sidebar-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+.sidebar-stats > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.sidebar-stats dt {
+  color: rgb(230 237 245 / 0.65);
+}
+
+.sidebar-stats dd {
+  margin: 0;
+  color: var(--color-white);
+  font-family: var(--font-mono);
+}
+
+.sidebar-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid rgb(230 237 245 / 0.4);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-white);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sidebar-action:hover {
+  border-color: var(--color-white);
+  background: rgb(255 255 255 / 0.1);
+}
+
+.sidebar-action:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.sidebar-status {
+  margin: 0;
+  padding: 6px 10px;
+  border-left: 3px solid var(--color-success);
+  background: rgb(255 255 255 / 0.06);
+  color: var(--color-white);
+  font-size: 0.8rem;
+}
+
+.sidebar-status a {
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .db-shell {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sidebar {
+    position: static;
+    width: auto;
+    height: auto;
+  }
+}
+
+/* Snapshots table */
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.field-inline {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.snapshot-table td {
+  white-space: nowrap;
+}
+
+.badge-flat {
+  margin-bottom: 0;
+}
+
+/* Status: color plus a text prefix so meaning is not color alone */
+.status-complete::before {
+  content: '✓ ';
+  color: var(--color-success);
+  font-weight: 700;
+}
+
+.status-failed::before {
+  content: '! ';
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.detail-row > td,
+.detail-row:hover > td {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-paper);
+}
+
+.detail-row .message {
+  margin: 0;
+  white-space: normal;
+}
+
+.table-compact {
+  max-width: 560px;
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-steel);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link-button::after {
+  content: ' ▸';
+}
+
+.link-button[aria-expanded='true']::after {
+  content: ' ▾';
+}
+
+.link-button:hover {
+  color: var(--color-navy);
+  text-decoration: underline;
+}
+
+.link-button:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 2px;
+}
 /* Keeps Save and Cancel in view while scrolling long forms */
 .save-bar {
   position: sticky;
