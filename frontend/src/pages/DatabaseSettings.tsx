@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router'
 import type { DatabaseActions } from '../App'
+import TablePicker, { type TableSelection } from '../components/TablePicker'
 import { frequencyLabels, type DatabaseDraft, type SnapshotFrequency } from '../data/mockData'
+import { sampleTables } from '../data/sampleTables'
 import NotFound from './NotFound'
 
 // Used both to finish creating a new database and to edit an existing one.
@@ -12,6 +14,16 @@ function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
   const existing = databases.find((d) => d.id === databaseId)
   const isNew = databaseId === undefined
   const [frequency, setFrequency] = useState<SnapshotFrequency>(existing?.frequency ?? 'monthly')
+  const [selections, setSelections] = useState(() => {
+    // New databases start with nothing tracked.
+    const saved = existing?.trackedTables ?? {}
+    return Object.fromEntries(
+      sampleTables.map((t): [string, TableSelection] => [
+        t.name,
+        { tracked: t.name in saved, columns: saved[t.name] ?? [] },
+      ]),
+    )
+  })
 
   if (isNew && !draft) return <Navigate to="/databases/new" replace />
   if (!isNew && !existing) return <NotFound />
@@ -20,12 +32,17 @@ function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
 
   const handleSave = (event: FormEvent) => {
     event.preventDefault()
+    const trackedTables = Object.fromEntries(
+      Object.entries(selections)
+        .filter(([, selection]) => selection.tracked)
+        .map(([table, selection]) => [table, selection.columns]),
+    )
     if (existing) {
-      onUpdate({ ...existing, frequency })
+      onUpdate({ ...existing, frequency, trackedTables })
       navigate(`/databases/${existing.id}`)
     } else if (draft) {
       const id = `${draft.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`
-      onCreate({ ...draft, id, frequency, snapshotCount: 0, lastSnapshotAt: null, analyses: [] })
+      onCreate({ ...draft, id, frequency, trackedTables, snapshotCount: 0, lastSnapshotAt: null, analyses: [] })
       navigate(`/databases/${id}`)
     }
   }
@@ -59,9 +76,15 @@ function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
 
         <section className="panel">
           <h2>Tracked Tables and Columns</h2>
-          <div className="placeholder">
-            <p className="muted">Table and column selection will appear here.</p>
-          </div>
+          <p className="muted">
+            Choose which tables to save in each snapshot, and which columns of each. The preview shows a few rows
+            to help you decide.
+          </p>
+          <TablePicker
+            tables={sampleTables}
+            selections={selections}
+            onChange={(table, selection) => setSelections((current) => ({ ...current, [table]: selection }))}
+          />
         </section>
 
         <div className="row">

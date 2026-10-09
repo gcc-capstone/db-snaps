@@ -3,8 +3,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-3) var(--space-5);
   padding: var(--space-3) var(--space-5);
   background: var(--color-navy);
   color: var(--color-white);
@@ -670,8 +669,21 @@ select:focus-visible,
   cursor: pointer;
 }
 
-.schema .list {
-  margin-top: var(--space-2);
+.tracked-tables {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.tracked-tables p {
+  margin: 0 0 var(--space-2);
+}
+
+.column-picker .column-untracked {
+  background: var(--color-paper);
+  color: var(--color-slate);
+  opacity: 0.6;
 }
 
 .btn-sm {
@@ -806,4 +818,112 @@ select:focus-visible,
 
 .chat-input input:focus {
   border-color: var(--color-steel);
+}
+/* ---- Settings: column picker table preview ---- */
+
+.column-picker-toolbar {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.column-picker-toolbar p {
+  margin: 0;
+}
+
+.column-picker th {
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.column-picker td {
+  white-space: nowrap;
+}
+
+.column-picker th.column-selected {
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+.column-picker th.column-selected input {
+  accent-color: var(--color-amber);
+}
+
+.column-picker .checkbox:has(input:disabled) {
+  cursor: default;
+}
+
+.column-type {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+.column-picker td.column-selected {
+  background: var(--color-paper);
+}
+
+.column-picker td.column-unselected {
+  color: var(--color-slate);
+  opacity: 0.6;
+}
+
+/* ---- Table tabs (settings and Add Analysis) ---- */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  border-bottom: 2px solid var(--color-mist);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  margin-bottom: -2px;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--color-slate);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab code {
+  color: inherit;
+  font-weight: 600;
+}
+
+.tab:hover {
+  color: var(--color-navy);
+  background: var(--color-paper);
+}
+
+.tab:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 2px;
+}
+
+.tab-active {
+  border-bottom-color: var(--color-navy);
+  color: var(--color-navy);
+}
+
+.tab-status {
+  font-size: 0.75rem;
+}
+
+/* min-width: 0 lets the preview table scroll inside the fieldset instead of stretching the page. */
+.column-picker-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.column-picker-fieldset:disabled {
+  opacity: 0.5;
 }

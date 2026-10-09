@@ -34,8 +34,7 @@ function App() {
         <Link to="/" className="nav-brand">MOTUS</Link>
         <nav>
           <ul className="nav-links">
-            <li><NavLink to="/" end>Databases</NavLink></li>
-            <li><NavLink to="/style">Style Guide</NavLink></li>
+            <li><NavLink to="/" end>Home</NavLink></li>
           </ul>
         </nav>
       </header>
