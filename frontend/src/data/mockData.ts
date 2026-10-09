@@ -4,6 +4,9 @@ import type { TrackedTables } from './sampleTables'
 
 export type SnapshotFrequency = 'daily' | 'weekly' | 'monthly'
 
+// How long a snapshot is kept before it is deleted (its TTL).
+export type SnapshotRetention = '3-months' | '6-months' | '1-year' | '2-years' | '5-years' | 'forever'
+
 export type DataPoint = {
   label: string
   value: number
@@ -38,6 +41,7 @@ export type TrackedDatabase = {
   host: string
   username: string
   frequency: SnapshotFrequency
+  retention: SnapshotRetention
   trackedTables: TrackedTables
   snapshotCount: number
   lastSnapshotAt: string | null
@@ -60,6 +64,15 @@ export const frequencyLabels: Record<SnapshotFrequency, string> = {
   daily: 'Daily',
   weekly: 'Weekly',
   monthly: 'Monthly',
+}
+
+export const retentionLabels: Record<SnapshotRetention, string> = {
+  '3-months': '3 months',
+  '6-months': '6 months',
+  '1-year': '1 year',
+  '2-years': '2 years',
+  '5-years': '5 years',
+  forever: 'Forever',
 }
 
 export const customSqlType: AnalysisType = {
@@ -123,6 +136,7 @@ export const initialDatabases: TrackedDatabase[] = [
     host: 'students.db.gcc.edu',
     username: 'motus_reader',
     frequency: 'monthly',
+    retention: 'forever',
     trackedTables: sampleTrackedTables,
     snapshotCount: 50,
     lastSnapshotAt: '2026-09-01T06:00:00Z',
@@ -164,6 +178,7 @@ export const initialDatabases: TrackedDatabase[] = [
     host: 'sis.partner-a.edu',
     username: 'readonly',
     frequency: 'weekly',
+    retention: '2-years',
     trackedTables: sampleTrackedTables,
     snapshotCount: 13,
     lastSnapshotAt: '2026-09-28T06:00:00Z',
