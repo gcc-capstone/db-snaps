@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import LineChart from '../components/LineChart'
 import { analysisTypes, formatValue, type TrackedDatabase } from '../data/mockData'
 import NotFound from './NotFound'
@@ -20,8 +20,7 @@ function AnalysisDetail({ databases }: { databases: TrackedDatabase[] }) {
 
   return (
     <main className="page">
-      <Link to={`/databases/${database.id}`}>← Back to {database.name}</Link>
-      <div className="page-header page-header-spaced">
+      <div className="page-header">
         <div>
           <p className="eyebrow">{type?.name}</p>
           <h1>{analysis.title}</h1>

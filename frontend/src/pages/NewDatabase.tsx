@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 import type { DatabaseDraft } from '../data/mockData'
 
 const engineNames: [string, string][] = [
@@ -54,8 +54,7 @@ function NewDatabase() {
 
   return (
     <main className="page">
-      <Link to="/">← Back to Databases</Link>
-      <div className="page-header page-header-spaced">
+      <div className="page-header">
         <div>
           <p className="eyebrow">Step 1 of 2</p>
           <h1>Add a Database</h1>

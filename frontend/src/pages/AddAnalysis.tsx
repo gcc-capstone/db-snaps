@@ -50,8 +50,7 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
 
   return (
     <main className="page">
-      <Link to={`/databases/${database.id}`}>← Back to Dashboard</Link>
-      <div className="page-header page-header-spaced">
+      <div className="page-header">
         <div>
           <p className="eyebrow">{database.name}</p>
           <h1>Add an Analysis</h1>

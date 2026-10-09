@@ -498,10 +498,6 @@ select:focus-visible,
 }
 
 /* Page-specific pieces */
-.page-header-spaced {
-  margin-top: var(--space-3);
-}
-
 .summary-line {
   margin-bottom: var(--space-4);
 }
@@ -926,4 +922,14 @@ select:focus-visible,
 
 .column-picker-fieldset:disabled {
   opacity: 0.5;
+}
+
+/* Keeps Save and Cancel in view while scrolling long forms */
+.save-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-paper);
 }
