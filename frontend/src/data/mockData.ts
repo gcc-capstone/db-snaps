@@ -1,5 +1,7 @@
 // Mock data for the dummy UI. Nothing here talks to a real database or API.
 
+import type { TrackedTables } from './sampleTables'
+
 export type SnapshotFrequency = 'daily' | 'weekly' | 'monthly'
 
 export type DataPoint = {
@@ -23,6 +25,7 @@ export type TrackedDatabase = {
   host: string
   username: string
   frequency: SnapshotFrequency
+  trackedTables: TrackedTables
   snapshotCount: number
   lastSnapshotAt: string | null
   analyses: Analysis[]
@@ -94,6 +97,9 @@ export function sampleAnalysis(type: AnalysisType, id: string): Analysis {
   return { id, typeId: type.id, title: type.name, unit: type.unit, points: series(values) }
 }
 
+// What the sample databases already track: the students columns analyses like retention rely on.
+const sampleTrackedTables: TrackedTables = { students: ['student_id', 'major', 'class_year', 'status', 'gpa'] }
+
 export const initialDatabases: TrackedDatabase[] = [
   {
     id: 'gcc-students',
@@ -102,6 +108,7 @@ export const initialDatabases: TrackedDatabase[] = [
     host: 'students.db.gcc.edu',
     username: 'motus_reader',
     frequency: 'monthly',
+    trackedTables: sampleTrackedTables,
     snapshotCount: 50,
     lastSnapshotAt: '2026-09-01T06:00:00Z',
     analyses: [
@@ -142,6 +149,7 @@ export const initialDatabases: TrackedDatabase[] = [
     host: 'sis.partner-a.edu',
     username: 'readonly',
     frequency: 'weekly',
+    trackedTables: sampleTrackedTables,
     snapshotCount: 13,
     lastSnapshotAt: '2026-09-28T06:00:00Z',
     analyses: [

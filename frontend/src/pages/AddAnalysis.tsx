@@ -2,8 +2,10 @@ import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import type { DatabaseActions } from '../App'
 import SqlAssistant from '../components/SqlAssistant'
+import TrackedDataPreview from '../components/TrackedDataPreview'
 import { customSqlType, sampleAnalysis } from '../data/mockData'
-import { schema, validateSql, type SqlValidation } from '../data/sqlTools'
+import { validateSql, type SqlValidation } from '../data/sqlTools'
+import { sampleTables } from '../data/sampleTables'
 import NotFound from './NotFound'
 
 function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
@@ -77,17 +79,6 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
             </span>
           </label>
 
-          <details className="schema">
-            <summary>Available tables and columns</summary>
-            <ul className="list">
-              {schema.map((t) => (
-                <li key={t.table}>
-                  <code>{t.table}</code> ({t.columns.join(', ')})
-                </li>
-              ))}
-            </ul>
-          </details>
-
           <div className="row">
             <button type="button" className="btn btn-secondary btn-sm" onClick={handleTest} disabled={!trimmedQuery}>
               Test Query
@@ -110,6 +101,8 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
           {tested && !testIsCurrent && (
             <p className="muted small">The query changed. Test it again to enable Create Analysis.</p>
           )}
+
+          <TrackedDataPreview tables={sampleTables} trackedTables={database.trackedTables} />
 
           <label className="field">
             <span className="field-label">Card title (optional)</span>
