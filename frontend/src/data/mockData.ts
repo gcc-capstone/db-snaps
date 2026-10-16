@@ -1,6 +1,11 @@
 // Mock data for the dummy UI. Nothing here talks to a real database or API.
 
-import type { TrackedTables } from './sampleTables'
+import { allColumns, type TrackedTables } from './sampleTables'
+
+// all: every column of every table, including ones added to the database later.
+// on-demand: start empty; creating an analysis starts tracking the columns its query uses.
+// custom: exactly the tables and columns picked under Advanced options.
+export type TrackingMode = 'all' | 'on-demand' | 'custom'
 
 export type SnapshotFrequency = 'daily' | 'weekly' | 'monthly'
 
@@ -42,6 +47,7 @@ export type TrackedDatabase = {
   username: string
   frequency: SnapshotFrequency
   retention: SnapshotRetention
+  trackingMode: TrackingMode
   trackedTables: TrackedTables
   snapshotCount: number
   lastSnapshotAt: string | null
@@ -52,6 +58,21 @@ export type TrackedDatabase = {
 
 // Details entered on the New Database page, before settings are chosen.
 export type DatabaseDraft = Pick<TrackedDatabase, 'name' | 'engine' | 'host' | 'username'>
+
+// Sent from the simple Step 2 page to Advanced options, so timing chosen there carries over.
+export type NewDatabaseState = DatabaseDraft & Partial<Pick<TrackedDatabase, 'frequency' | 'retention'>>
+
+export type SnapshotSettings = Pick<TrackedDatabase, 'frequency' | 'retention' | 'trackingMode' | 'trackedTables'>
+
+// What the two simple tracking options start with.
+export function trackedTablesFor(mode: Exclude<TrackingMode, 'custom'>): TrackedTables {
+  return mode === 'all' ? allColumns() : {}
+}
+
+export function createDatabase(draft: DatabaseDraft, settings: SnapshotSettings): TrackedDatabase {
+  const id = `${draft.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now()}`
+  return { ...draft, ...settings, id, snapshotCount: 0, lastSnapshotAt: null, analyses: [] }
+}
 
 export type AnalysisType = {
   id: string
@@ -140,6 +161,7 @@ export const initialDatabases: TrackedDatabase[] = [
     username: 'motus_reader',
     frequency: 'monthly',
     retention: 'forever',
+    trackingMode: 'custom',
     trackedTables: sampleTrackedTables,
     snapshotCount: 50,
     lastSnapshotAt: '2026-09-01T06:00:00Z',
@@ -182,6 +204,7 @@ export const initialDatabases: TrackedDatabase[] = [
     username: 'readonly',
     frequency: 'weekly',
     retention: '2-years',
+    trackingMode: 'custom',
     trackedTables: sampleTrackedTables,
     snapshotCount: 13,
     lastSnapshotAt: '2026-09-28T06:00:00Z',

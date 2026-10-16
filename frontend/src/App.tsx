@@ -9,6 +9,7 @@ import DatabaseDashboard from './pages/DatabaseDashboard'
 import DatabaseSettings from './pages/DatabaseSettings'
 import Home from './pages/Home'
 import NewDatabase from './pages/NewDatabase'
+import NewDatabaseTracking from './pages/NewDatabaseTracking'
 import NotFound from './pages/NotFound'
 import Snapshots from './pages/Snapshots'
 import StyleReference from './pages/StyleReference'
@@ -44,7 +45,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home databases={databases} />} />
         <Route path="/databases/new" element={<NewDatabase />} />
-        <Route path="/databases/new/settings" element={<DatabaseSettings {...actions} />} />
+        <Route path="/databases/new/tracking" element={<NewDatabaseTracking {...actions} />} />
+        <Route path="/databases/new/advanced" element={<DatabaseSettings {...actions} />} />
         <Route path="/databases/:databaseId" element={<DatabaseLayout databases={databases} onUpdate={actions.onUpdate} />}>
           <Route index element={<DatabaseDashboard databases={databases} />} />
           <Route path="settings" element={<DatabaseSettings {...actions} />} />
