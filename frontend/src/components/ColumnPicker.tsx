@@ -41,7 +41,7 @@ function ColumnPicker({ table, selected, onChange }: ColumnPickerProps) {
               {table.columns.map((column) => {
                 const isKey = column.name === table.primaryKey
                 return (
-                  <th key={column.name} className={isSelected(column.name) ? 'column-selected' : undefined}>
+                  <th key={column.name} className={isSelected(column.name) ? 'column-selected' : 'column-unselected'}>
                     <label className="checkbox" title={isKey ? 'Primary key, always tracked' : undefined}>
                       <input
                         type="checkbox"

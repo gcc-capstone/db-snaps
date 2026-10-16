@@ -2,7 +2,7 @@ import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import type { DatabaseActions } from '../App'
 import SqlAssistant from '../components/SqlAssistant'
-import TrackedDataPreview from '../components/TrackedDataPreview'
+import TablesPreview from '../components/TablesPreview'
 import { customSqlType, sampleAnalysis } from '../data/mockData'
 import { findReferencedColumns, validateSql, type SqlValidation } from '../data/sqlTools'
 import { mergeTracked, sampleTables, type TrackedTables } from '../data/sampleTables'
@@ -115,26 +115,13 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
             <p className="muted small">The query changed. Test it again to enable Create Analysis.</p>
           )}
 
-          {Object.keys(newColumns).length > 0 && (
-            <div className="message message-info">
-              <p>Creating this analysis starts tracking these columns:</p>
-              <ul className="list">
-                {Object.entries(newColumns).map(([table, columns]) => (
-                  <li key={table}>
-                    <code>{table}</code>: {columns.join(', ')}
-                  </li>
-                ))}
-              </ul>
-              <p className="muted small">Earlier snapshots don't include them, so their history starts with the next snapshot.</p>
-            </div>
-          )}
-
-          <TrackedDataPreview
+          <TablesPreview
             tables={sampleTables}
             trackedTables={database.trackedTables}
-            emptyMessage={
+            pendingColumns={newColumns}
+            note={
               onDemand
-                ? 'Nothing is tracked yet. Creating an analysis starts tracking the columns its query uses.'
+                ? 'Creating an analysis starts tracking the columns its query uses. Change tracking in Database Settings.'
                 : undefined
             }
           />
