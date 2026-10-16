@@ -5,6 +5,7 @@ import Tabs from './Tabs'
 type TrackedDataPreviewProps = {
   tables: TablePreview[]
   trackedTables: TrackedTables
+  emptyMessage?: string
 }
 
 type TrackedTableProps = {
@@ -57,7 +58,11 @@ function TrackedTable({ table, trackedColumns, showUntracked }: TrackedTableProp
 }
 
 // Collapsible view of each tracked table. Tabs appear only when more than one table is tracked.
-function TrackedDataPreview({ tables, trackedTables }: TrackedDataPreviewProps) {
+function TrackedDataPreview({
+  tables,
+  trackedTables,
+  emptyMessage = 'No tables are tracked. Choose tables in Database Settings.',
+}: TrackedDataPreviewProps) {
   const tracked = tables.filter((t) => t.name in trackedTables)
   const [activeName, setActiveName] = useState(tracked[0]?.name)
   const active = tracked.find((t) => t.name === activeName) ?? tracked[0]
@@ -67,7 +72,7 @@ function TrackedDataPreview({ tables, trackedTables }: TrackedDataPreviewProps) 
     <details className="schema">
       <summary>View tracked tables</summary>
       <div className="tracked-tables">
-        {tracked.length === 0 && <p className="muted small">No tables are tracked. Choose tables in Database Settings.</p>}
+        {tracked.length === 0 && <p className="muted small">{emptyMessage}</p>}
         {tracked.length > 0 && (
           <label className="checkbox small">
             <input type="checkbox" checked={showUntracked} onChange={(e) => setShowUntracked(e.target.checked)} />

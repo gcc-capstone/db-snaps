@@ -372,6 +372,14 @@ select:focus-visible,
   border-color: var(--color-danger);
 }
 
+.message-info {
+  border-color: var(--color-steel);
+}
+
+.message-info p {
+  margin: 0 0 var(--space-2);
+}
+
 .message-error::before {
   content: '! ';
   color: var(--color-danger);
