@@ -1,16 +1,19 @@
 // Dummy SQL helpers for the prototype. Nothing here talks to a real database or AI.
 
+import { sampleTables, type TrackedTables } from './sampleTables'
+
 export type SqlValidation = { ok: true } | { ok: false; error: string }
 
 export type AssistantReply = { text: string; sql?: string }
 
-// Tables the fake "connected database" exposes. Used for validation and shown in the UI.
-export const schema: { table: string; columns: string[] }[] = [
-  { table: 'students', columns: ['student_id', 'name', 'major', 'status', 'enrolled_year', 'snapshot_year'] },
-  { table: 'enrollments', columns: ['student_id', 'course_code', 'term', 'grade', 'snapshot_year'] },
-  { table: 'majors', columns: ['major_code', 'major_name', 'department'] },
-  { table: 'major_changes', columns: ['student_id', 'from_major', 'to_major', 'changed_year'] },
-]
+// Added by Motus to every snapshotted row so queries can compare snapshots. It is not in the source database.
+export const snapshotColumn = 'snapshot_year'
+
+// Tables the fake "connected database" exposes, as queries see them. Used for validation.
+export const schema: { table: string; columns: string[] }[] = sampleTables.map((t) => ({
+  table: t.name,
+  columns: [...t.columns.map((c) => c.name), snapshotColumn],
+}))
 
 const forbiddenWords = ['insert', 'update', 'delete', 'drop', 'alter', 'truncate', 'create', 'grant', 'revoke', 'merge', 'exec']
 
@@ -51,6 +54,19 @@ export function validateSql(raw: string): SqlValidation {
   }
 
   return { ok: true }
+}
+
+// Columns a query reads, by table, plus each table's primary key (needed to match records between snapshots).
+// Best effort: any word in the query that names a column of a table in its FROM or JOIN clauses counts.
+export function findReferencedColumns(raw: string): TrackedTables {
+  const code = raw.replace(/'[^']*'/g, "''").toLowerCase()
+  const words = new Set(code.match(/[a-z_][a-z0-9_]*/g) ?? [])
+  const tableNames = new Set([...code.matchAll(/\b(?:from|join)\s+([a-z_][\w.]*)/g)].map((m) => m[1].split('.').pop()!))
+  return Object.fromEntries(
+    sampleTables
+      .filter((t) => tableNames.has(t.name))
+      .map((t) => [t.name, t.columns.map((c) => c.name).filter((c) => c === t.primaryKey || words.has(c))]),
+  )
 }
 
 const majors: [RegExp, string][] = [

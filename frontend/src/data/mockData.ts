@@ -125,8 +125,11 @@ export function sampleAnalysis(type: AnalysisType, id: string): Analysis {
   return { id, typeId: type.id, title: type.name, unit: type.unit, points: series(values) }
 }
 
-// What the sample databases already track: the students columns analyses like retention rely on.
-const sampleTrackedTables: TrackedTables = { students: ['student_id', 'major', 'class_year', 'status', 'gpa'] }
+// What the sample databases already track: the columns their analyses rely on.
+const sampleTrackedTables: TrackedTables = {
+  students: ['student_id', 'major', 'class_year', 'status', 'gpa'],
+  major_changes: ['change_id', 'student_id', 'from_major', 'to_major', 'changed_year'],
+}
 
 export const initialDatabases: TrackedDatabase[] = [
   {
