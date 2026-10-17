@@ -579,6 +579,7 @@ select:focus-visible,
 }
 
 .choice {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -674,12 +675,6 @@ select:focus-visible,
 
 .tracked-tables p {
   margin: 0 0 var(--space-2);
-}
-
-.column-picker .column-untracked {
-  background: var(--color-paper);
-  color: var(--color-slate);
-  opacity: 0.6;
 }
 
 .btn-sm {
@@ -836,12 +831,17 @@ select:focus-visible,
 }
 
 .column-picker th.column-selected {
-  background: var(--color-navy);
-  color: var(--color-white);
+  background: var(--color-sky);
+  color: var(--color-navy);
 }
 
 .column-picker th.column-selected input {
-  accent-color: var(--color-amber);
+  accent-color: var(--color-navy);
+}
+
+.column-picker th.column-unselected {
+  background: var(--color-paper);
+  color: var(--color-slate);
 }
 
 .column-picker .checkbox:has(input:disabled) {
@@ -856,7 +856,51 @@ select:focus-visible,
 }
 
 .column-picker td.column-selected {
-  background: var(--color-paper);
+  background: var(--color-mist);
+}
+
+/* Columns an on-demand analysis will start tracking (Add Analysis preview). */
+.column-picker th.column-pending {
+  background: var(--color-amber);
+  color: var(--color-ink);
+}
+
+.column-picker td.column-pending {
+  background: color-mix(in srgb, var(--color-amber) 18%, var(--color-white));
+}
+
+.column-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-slate);
+}
+
+.column-legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.column-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  background: var(--color-white);
+}
+
+.column-legend-swatch.column-selected {
+  border-color: var(--color-steel);
+  background: var(--color-sky);
+}
+
+.column-legend-swatch.column-pending {
+  border-color: var(--color-amber);
+  background: var(--color-amber);
 }
 
 .column-picker td.column-unselected {

@@ -3,14 +3,16 @@
 // so it always agrees with the numbers shown elsewhere in the UI.
 
 import type { Snapshot, TrackedDatabase } from './mockData'
+import { sampleTables } from './sampleTables'
 
-// Same tables as the schema list on the Add Analysis page.
-const profiles = [
-  { table: 'students', base: 2250, growth: 5 },
-  { table: 'enrollments', base: 15800, growth: 38 },
-  { table: 'majors', base: 58, growth: 0 },
-  { table: 'major_changes', base: 120, growth: 3 },
-]
+// Rows added per snapshot. Each table starts small enough to reach about its totalRows by snapshot 50.
+const growth: Record<string, number> = { students: 5, faculty: 0, major_changes: 3 }
+
+const profiles = sampleTables.map((t) => ({
+  table: t.name,
+  base: t.totalRows - (growth[t.name] ?? 0) * 50,
+  growth: growth[t.name] ?? 0,
+}))
 
 function hash(text: string): number {
   return [...text].reduce((sum, char) => (sum * 31 + char.charCodeAt(0)) % 100003, 7)
@@ -38,7 +40,7 @@ function makeSnapshot(
 
   if (failed) {
     const errors = [
-      'Connection timed out after 30 s while reading enrollments.',
+      'Connection timed out after 30 s while reading students.',
       `Login failed for user "${database.username}".`,
     ]
     return {
@@ -53,7 +55,8 @@ function makeSnapshot(
   }
 
   // Tables grow steadily; a little noise keeps the "change" column from looking fake.
-  const tables = profiles.map((p) => ({
+  // Only the tracked tables are copied into a snapshot.
+  const tables = profiles.filter((p) => p.table in database.trackedTables).map((p) => ({
     table: p.table,
     rows: p.base + p.growth * number + (p.growth > 0 ? wobble(seed + p.base, number, Math.max(1, Math.round(p.growth * 0.3))) : 0),
   }))

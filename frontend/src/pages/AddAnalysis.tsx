@@ -2,11 +2,20 @@ import { useRef, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import type { DatabaseActions } from '../App'
 import SqlAssistant from '../components/SqlAssistant'
-import TrackedDataPreview from '../components/TrackedDataPreview'
+import TablesPreview from '../components/TablesPreview'
 import { customSqlType, sampleAnalysis } from '../data/mockData'
-import { validateSql, type SqlValidation } from '../data/sqlTools'
-import { sampleTables } from '../data/sampleTables'
+import { findReferencedColumns, validateSql, type SqlValidation } from '../data/sqlTools'
+import { mergeTracked, sampleTables, type TrackedTables } from '../data/sampleTables'
 import NotFound from './NotFound'
+
+// Columns in `wanted` that `tracked` doesn't have yet, by table.
+function untracked(wanted: TrackedTables, tracked: TrackedTables): TrackedTables {
+  return Object.fromEntries(
+    Object.entries(wanted)
+      .map(([table, columns]): [string, string[]] => [table, columns.filter((c) => !tracked[table]?.includes(c))])
+      .filter(([, columns]) => columns.length > 0),
+  )
+}
 
 function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
   const { databaseId } = useParams()
@@ -23,6 +32,10 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
   const trimmedQuery = query.trim()
   const testIsCurrent = tested !== null && tested.query === trimmedQuery
   const passed = testIsCurrent && tested.result.ok
+  const onDemand = database.trackingMode === 'on-demand'
+  // On-demand databases start tracking whatever the query uses that isn't tracked yet.
+  const newColumns: TrackedTables =
+    onDemand && passed ? untracked(findReferencedColumns(trimmedQuery), database.trackedTables) : {}
 
   const handleTest = () => setTested({ query: trimmedQuery, result: validateSql(trimmedQuery) })
 
@@ -44,7 +57,8 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
       title: title.trim() || 'Custom Query',
       query: trimmedQuery,
     }
-    onUpdate({ ...database, analyses: [...database.analyses, analysis] })
+    const trackedTables = onDemand ? mergeTracked(database.trackedTables, newColumns) : database.trackedTables
+    onUpdate({ ...database, trackedTables, analyses: [...database.analyses, analysis] })
     navigate(`/databases/${database.id}`)
   }
 
@@ -101,7 +115,16 @@ function AddAnalysis({ databases, onUpdate }: DatabaseActions) {
             <p className="muted small">The query changed. Test it again to enable Create Analysis.</p>
           )}
 
-          <TrackedDataPreview tables={sampleTables} trackedTables={database.trackedTables} />
+          <TablesPreview
+            tables={sampleTables}
+            trackedTables={database.trackedTables}
+            pendingColumns={newColumns}
+            note={
+              onDemand
+                ? 'Creating an analysis starts tracking the columns its query uses. Change tracking in Database Settings.'
+                : undefined
+            }
+          />
 
           <label className="field">
             <span className="field-label">Card title (optional)</span>

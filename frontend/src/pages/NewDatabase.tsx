@@ -49,7 +49,7 @@ function NewDatabase() {
       username: username.trim(),
     }
     // The password is not kept anywhere in this prototype.
-    navigate('/databases/new/settings', { state: draft })
+    navigate('/databases/new/tracking', { state: draft })
   }
 
   return (

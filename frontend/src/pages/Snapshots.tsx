@@ -143,6 +143,8 @@ function Snapshots({ databases }: { databases: TrackedDatabase[] }) {
                             <td colSpan={8}>
                               {snapshot.status === 'failed' ? (
                                 <p className="message message-error">Snapshot failed. {snapshot.error}</p>
+                              ) : snapshot.tables.length === 0 ? (
+                                <p className="muted small">No tables were tracked when this snapshot was taken.</p>
                               ) : (
                                 <table className="table table-compact">
                                   <thead>

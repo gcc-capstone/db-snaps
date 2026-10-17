@@ -1,4 +1,4 @@
-// Fake tables shown on the settings page so users can pick which tables and columns to track.
+// Fake tables of the connected database. The settings page shows them so users can pick which tables and columns to track.
 // Only a 10-row preview of each is included; totalRows stands in for the full table size.
 
 export type TableColumn = {
@@ -79,7 +79,51 @@ export const facultyTable: TablePreview = {
   ],
 }
 
-export const sampleTables = [studentTable, facultyTable]
+export const majorChangesTable: TablePreview = {
+  name: 'major_changes',
+  totalRows: 268,
+  primaryKey: 'change_id',
+  columns: [
+    { name: 'change_id', type: 'integer' },
+    { name: 'student_id', type: 'integer' },
+    { name: 'from_major', type: 'text' },
+    { name: 'to_major', type: 'text' },
+    { name: 'changed_term', type: 'text' },
+    { name: 'changed_year', type: 'integer' },
+  ],
+  rows: [
+    { change_id: 5012, student_id: 100245, from_major: 'Computer Science', to_major: 'Business Analytics', changed_term: 'Spring 2024', changed_year: 2024 },
+    { change_id: 5019, student_id: 100318, from_major: 'Undeclared', to_major: 'Mechanical Engineering', changed_term: 'Fall 2024', changed_year: 2024 },
+    { change_id: 5023, student_id: 100302, from_major: 'Biology', to_major: 'Nursing', changed_term: 'Fall 2024', changed_year: 2024 },
+    { change_id: 5031, student_id: 100327, from_major: 'Undeclared', to_major: 'Computer Science', changed_term: 'Spring 2025', changed_year: 2025 },
+    { change_id: 5036, student_id: 100439, from_major: 'Computer Science', to_major: 'Business Analytics', changed_term: 'Spring 2025', changed_year: 2025 },
+    { change_id: 5040, student_id: 100411, from_major: 'Undeclared', to_major: 'Biology', changed_term: 'Fall 2025', changed_year: 2025 },
+    { change_id: 5044, student_id: 100231, from_major: 'Mathematics', to_major: 'Computer Science', changed_term: 'Fall 2025', changed_year: 2025 },
+    { change_id: 5051, student_id: 100426, from_major: 'Nursing', to_major: 'Undeclared', changed_term: 'Spring 2026', changed_year: 2026 },
+    { change_id: 5057, student_id: 100502, from_major: 'Undeclared', to_major: 'Elementary Education', changed_term: 'Fall 2026', changed_year: 2026 },
+    { change_id: 5060, student_id: 100517, from_major: 'Computer Science', to_major: 'Business Analytics', changed_term: 'Fall 2026', changed_year: 2026 },
+  ],
+}
+
+// The one schema for the fake connected database: the settings pickers, SQL checks and snapshot history all use it.
+export const sampleTables = [studentTable, facultyTable, majorChangesTable]
 
 // Tracked table name -> tracked column names. Tables that are not tracked are left out.
 export type TrackedTables = Record<string, string[]>
+
+// Every column of every table, for the "track everything" option.
+export function allColumns(tables: TablePreview[] = sampleTables): TrackedTables {
+  return Object.fromEntries(tables.map((t) => [t.name, t.columns.map((c) => c.name)]))
+}
+
+// Union of two selections, keeping each table's column order from the schema.
+export function mergeTracked(a: TrackedTables, b: TrackedTables, tables: TablePreview[] = sampleTables): TrackedTables {
+  return Object.fromEntries(
+    tables
+      .filter((t) => t.name in a || t.name in b)
+      .map((t) => {
+        const wanted = new Set([...(a[t.name] ?? []), ...(b[t.name] ?? [])])
+        return [t.name, t.columns.map((c) => c.name).filter((c) => wanted.has(c))]
+      }),
+  )
+}
