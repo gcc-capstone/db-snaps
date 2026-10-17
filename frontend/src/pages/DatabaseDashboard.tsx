@@ -16,7 +16,7 @@ function DatabaseDashboard({ databases }: { databases: TrackedDatabase[] }) {
 
   return (
     <main className="page">
-      <div className="page-header">
+      <div className="page-header page-header-spaced">
         <div>
           <p className="eyebrow">{database.engine} · {database.host}</p>
           <h1>{database.name}</h1>
