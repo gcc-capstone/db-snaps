@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router'
 import type { DatabaseActions } from '../App'
+import DiscardSetupButton from '../components/DiscardSetupButton'
 import SnapshotTimingFields from '../components/SnapshotTimingFields'
 import TablePicker, { type TableSelection } from '../components/TablePicker'
 import TrackingModeOptions from '../components/TrackingModeOptions'
@@ -29,8 +30,8 @@ function toTrackedTables(selections: Record<string, TableSelection>): TrackedTab
   )
 }
 
-// Used both as Advanced options when creating a database and to edit an existing one.
-// New databases get here only through Advanced options, so they always use a custom selection.
+// Used both to pick a custom selection when creating a database and to edit an existing one.
+// New databases get here only by choosing specific tables and columns, so they always use a custom selection.
 function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
   const { databaseId } = useParams()
   const navigate = useNavigate()
@@ -43,7 +44,7 @@ function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
   // New databases start with nothing tracked.
   const [selections, setSelections] = useState(() => toSelections(existing?.trackedTables ?? {}))
   // Set once, so picking an option card doesn't fold the picker away while it is being used.
-  const [advancedStartsOpen] = useState(mode === 'custom')
+  const [customStartsOpen] = useState(mode === 'custom')
 
   if (isNew && !draft) return <Navigate to="/databases/new" replace />
   if (!isNew && !existing) return <NotFound />
@@ -89,7 +90,7 @@ function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
     <main className="page">
       <div className="page-header">
         <div>
-          <p className="eyebrow">{isNew ? 'Step 2 of 2 · Advanced options' : name}</p>
+          <p className="eyebrow">{isNew ? 'Step 2 of 2 · Custom selection' : name}</p>
           <h1>{isNew ? `Set Up Snapshots for ${name}` : 'Database Settings'}</h1>
           <p className="muted">Choose what data each snapshot includes, how often snapshots are taken, and how long they are kept.</p>
         </div>
@@ -99,6 +100,10 @@ function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
         {isNew ? (
           <section className="panel">
             <h2>Tables and Columns</h2>
+            <p className="small">
+              <Link to="/databases/new/tracking" state={{ ...draft, frequency, retention }}>← Back to simple options</Link>
+              <span className="muted"> · track everything or as needed</span>
+            </p>
             {picker}
           </section>
         ) : (
@@ -106,10 +111,10 @@ function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
             <h2>What to Track</h2>
             <TrackingModeOptions value={mode} onChange={handleModeChange} isNew={false} />
             {mode === 'custom' && (
-              <p className="muted small">Using a custom selection of tables and columns. Change it under Advanced options.</p>
+              <p className="muted small">Using a custom selection of tables and columns. Change it below.</p>
             )}
-            <details className="schema" open={advancedStartsOpen}>
-              <summary>Advanced options: choose tables and columns</summary>
+            <details className="schema" open={customStartsOpen}>
+              <summary>Choose specific tables and columns</summary>
               <div className="tracked-tables">{picker}</div>
             </details>
           </section>
@@ -126,9 +131,13 @@ function DatabaseSettings({ databases, onCreate, onUpdate }: DatabaseActions) {
           <button type="submit" className="btn btn-primary">
             {isNew ? 'Create Database' : 'Save Settings'}
           </button>
-          <Link to={existing ? `/databases/${existing.id}` : '/'} className="btn btn-secondary">
-            Cancel
-          </Link>
+          {existing ? (
+            <Link to={`/databases/${existing.id}`} className="btn btn-secondary">
+              Cancel
+            </Link>
+          ) : (
+            <DiscardSetupButton databaseName={name ?? 'this database'} />
+          )}
         </div>
       </form>
     </main>

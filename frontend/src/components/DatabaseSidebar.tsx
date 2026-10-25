@@ -29,10 +29,8 @@ const icons = {
   add: icon(<path d="M8 3v10M3 8h10" />),
   settings: icon(
     <>
-      <path d="M2 4h12M2 8h12M2 12h12" />
-      <circle cx="5" cy="4" r="1.5" fill="currentColor" />
-      <circle cx="10.5" cy="8" r="1.5" fill="currentColor" />
-      <circle cx="6.5" cy="12" r="1.5" fill="currentColor" />
+      <path d="M6.55 3.32L6.88 1.5h2.24l.33 1.82.84.35 1.52-1.06 1.58 1.58-1.06 1.52.35.84 1.82.33v2.24l-1.82.33-.35.84 1.06 1.52-1.58 1.58-1.52-1.06-.84.35-.33 1.82H6.88l-.33-1.82-.84-.35-1.52 1.06-1.58-1.58 1.06-1.52-.35-.84-1.82-.33V6.88l1.82-.33.35-.84-1.06-1.52 1.58-1.58 1.52 1.06z" />
+      <circle cx="8" cy="8" r="2" />
     </>,
   ),
   record: icon(
@@ -57,29 +55,29 @@ function DatabaseSidebar({
   const path = useLocation().pathname.replace(/\/$/, '')
   const base = `/databases/${database.id}`
 
-  const groups: { label: string; items: NavItem[] }[] = [
+  const items: NavItem[] = [
     {
-      label: 'Monitor',
-      items: [
-        {
-          to: base,
-          label: 'Dashboard',
-          icon: icons.dashboard,
-          // Looking at one analysis still counts as being on the dashboard.
-          active: path === base || (path.startsWith(`${base}/analyses/`) && path !== `${base}/analyses/new`),
-        },
-        { to: `${base}/snapshots`, label: 'Snapshots', icon: icons.snapshots, active: path.startsWith(`${base}/snapshots`) },
-      ],
+      to: base,
+      label: 'Dashboard',
+      icon: icons.dashboard,
+      active: path === base,
     },
-    {
-      label: 'Analyze',
-      items: [{ to: `${base}/analyses/new`, label: 'Add Analysis', icon: icons.add, active: path === `${base}/analyses/new` }],
-    },
-    {
-      label: 'Configure',
-      items: [{ to: `${base}/settings`, label: 'Settings', icon: icons.settings, active: path === `${base}/settings` }],
-    },
+    { to: `${base}/snapshots`, label: 'Snapshots', icon: icons.snapshots, active: path.startsWith(`${base}/snapshots`) },
+    { to: `${base}/analyses/new`, label: 'Add Analysis', icon: icons.add, active: path === `${base}/analyses/new` },
   ]
+  // Pinned to the bottom of the sidebar, apart from the everyday pages.
+  const settings: NavItem = { to: `${base}/settings`, label: 'Settings', icon: icons.settings, active: path === `${base}/settings` }
+
+  const navLink = (item: NavItem) => (
+    <Link
+      to={item.to}
+      className={item.active ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
+      aria-current={item.active ? 'page' : undefined}
+    >
+      {item.icon}
+      {item.label}
+    </Link>
+  )
 
   const takeSnapshot = () => {
     setTaking(true)
@@ -99,34 +97,41 @@ function DatabaseSidebar({
 
   return (
     <aside className="sidebar" aria-label={`${database.name} navigation`}>
-      <Link to="/" className="sidebar-back">← All databases</Link>
-
       <div className="sidebar-db">
         <span className="sidebar-db-name">{database.name}</span>
         <span className="sidebar-db-engine">{database.engine}</span>
         <code className="sidebar-db-host">{database.host}</code>
       </div>
 
-      <nav className="sidebar-nav" aria-label={`${database.name} sections`}>
-        {groups.map((group) => (
-          <div className="sidebar-group" key={group.label}>
-            <span className="sidebar-label">{group.label}</span>
-            <ul className="sidebar-links">
-              {group.items.map((item) => (
-                <li key={item.to}>
-                  <Link
-                    to={item.to}
-                    className={item.active ? 'sidebar-link sidebar-link-active' : 'sidebar-link'}
-                    aria-current={item.active ? 'page' : undefined}
-                  >
-                    {item.icon}
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <nav aria-label={`${database.name} sections`}>
+        <ul className="sidebar-links">
+          {items.map((item) => (
+            <li key={item.to}>
+              {navLink(item)}
+              {/* Each analysis is listed under Dashboard, so the one being viewed shows as the current page. */}
+              {item.to === base && database.analyses.length > 0 && (
+                <ul className="sidebar-sublinks">
+                  {database.analyses.map((analysis) => {
+                    const to = `${base}/analyses/${analysis.id}`
+                    const active = path === to
+                    return (
+                      <li key={analysis.id}>
+                        <Link
+                          to={to}
+                          className={active ? 'sidebar-sublink sidebar-link-active' : 'sidebar-sublink'}
+                          aria-current={active ? 'page' : undefined}
+                          title={analysis.title}
+                        >
+                          {analysis.title}
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
       </nav>
 
       <div className="sidebar-footer">
@@ -156,6 +161,10 @@ function DatabaseSidebar({
           </p>
         )}
       </div>
+
+      <nav className="sidebar-settings" aria-label={`${database.name} settings`}>
+        {navLink(settings)}
+      </nav>
     </aside>
   )
 }

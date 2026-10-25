@@ -165,6 +165,16 @@ code {
   color: var(--color-steel);
 }
 
+.btn-danger {
+  background: var(--color-danger);
+  color: var(--color-white);
+}
+
+.btn-danger:hover {
+  background: #8f1e18;
+  color: var(--color-white);
+}
+
 .btn:disabled,
 .btn:disabled:hover {
   opacity: 0.45;
@@ -618,6 +628,72 @@ select:focus-visible,
   content: '✓ ';
 }
 
+
+.choice-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.info-tip {
+  position: relative;
+  display: inline-flex;
+}
+
+.info-tip-button {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid var(--color-slate);
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-slate);
+  font: italic 600 12px/1 Georgia, serif;
+  cursor: help;
+}
+
+.info-tip-button:hover,
+.info-tip-button:focus-visible {
+  border-color: var(--color-steel);
+  color: var(--color-steel);
+}
+
+.info-tip-button:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 2px;
+}
+
+.info-tip-text {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 10;
+  width: max-content;
+  max-width: 280px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-white);
+  box-shadow: var(--shadow);
+  color: var(--color-ink);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 0.15s;
+  visibility: hidden;
+}
+
+.info-tip:hover .info-tip-text,
+.info-tip:focus-within .info-tip-text {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* ---- Add Analysis: SQL editor, assistant chat (append to the end of App.css) ---- */
 
 .sql-editor:focus-visible,
@@ -700,8 +776,12 @@ select:focus-visible,
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding-bottom: var(--space-3);
+  padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--color-border);
+}
+
+.assistant h2 {
+  margin: 0;
 }
 
 .chat-log {
@@ -799,7 +879,7 @@ select:focus-visible,
 .chat-input input {
   flex: 1;
   min-width: 0;
-  padding: var(--space-2) var(--space-3);
+  padding: var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-white);
@@ -1032,15 +1112,6 @@ select:focus-visible,
   outline-offset: 2px;
 }
 
-.sidebar-back {
-  font-size: 0.8rem;
-  opacity: 0.75;
-}
-
-.sidebar-back:hover {
-  opacity: 1;
-}
-
 .sidebar-db {
   display: flex;
   flex-direction: column;
@@ -1056,8 +1127,7 @@ select:focus-visible,
   line-height: 1.3;
 }
 
-.sidebar-db-engine,
-.sidebar-label {
+.sidebar-db-engine {
   color: rgb(230 237 245 / 0.65);
   font-size: 0.7rem;
   font-weight: 600;
@@ -1072,17 +1142,11 @@ select:focus-visible,
   overflow-wrap: anywhere;
 }
 
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
 .sidebar-links {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin: 6px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -1110,6 +1174,31 @@ select:focus-visible,
   font-weight: 600;
 }
 
+.sidebar-sublinks {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px 0 var(--space-1) 18px;
+  padding: 0 0 0 var(--space-2);
+  border-left: 1px solid rgb(255 255 255 / 0.12);
+  list-style: none;
+}
+
+.sidebar-sublink {
+  display: block;
+  padding: 4px 10px;
+  overflow: hidden;
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-sublink:hover {
+  background: rgb(255 255 255 / 0.06);
+}
+
 .sidebar-link svg {
   flex: none;
   opacity: 0.8;
@@ -1125,6 +1214,11 @@ select:focus-visible,
   flex-direction: column;
   gap: var(--space-3);
   margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+
+.sidebar-settings {
   padding-top: var(--space-3);
   border-top: 1px solid rgb(255 255 255 / 0.12);
 }
@@ -1304,4 +1398,245 @@ select:focus-visible,
   padding: var(--space-3) 0;
   border-top: 1px solid var(--color-border);
   background: var(--color-paper);
+}
+
+.confirm-dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-white);
+  box-shadow: var(--shadow);
+  color: var(--color-ink);
+}
+
+.confirm-dialog::backdrop {
+  background: rgb(11 37 69 / 0.4);
+}
+
+.confirm-dialog h2 {
+  margin-top: 0;
+}
+
+.confirm-dialog .row {
+  justify-content: flex-end;
+}
+
+/* ---- Add Analysis: query editor with the schema browser beside it ---- */
+
+.query-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.query-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.query-editor .message {
+  margin: 0;
+}
+
+.query-editor .sql-editor {
+  min-height: 220px;
+}
+
+.schema-browser {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 30rem;
+  padding: var(--space-3);
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-paper);
+}
+
+.schema-browser h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.schema-browser p {
+  margin: 0;
+}
+
+.schema-browser-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.schema-browser .column-legend {
+  gap: var(--space-2);
+  font-size: 0.75rem;
+}
+
+.schema-tables,
+.schema-columns ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.schema-table,
+.schema-column,
+.schema-preview-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--color-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.schema-table:hover,
+.schema-column:hover {
+  background: var(--color-mist);
+}
+
+.schema-table:focus-visible,
+.schema-column:focus-visible,
+.schema-preview-link:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: -1px;
+}
+
+.schema-table code {
+  color: var(--color-navy);
+  font-weight: 600;
+}
+
+.schema-caret {
+  width: 0.75rem;
+  color: var(--color-slate);
+  font-size: 0.75rem;
+}
+
+.schema-count {
+  margin-left: auto;
+  color: var(--color-slate);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.schema-columns {
+  margin: 0 0 var(--space-2) var(--space-3);
+  padding-left: var(--space-2);
+  border-left: 1px solid var(--color-border);
+}
+
+.schema-column {
+  font-size: 0.85rem;
+}
+
+.schema-column code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schema-column .column-legend-swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+}
+
+.schema-type {
+  margin-left: auto;
+  color: var(--color-slate);
+  font-size: 0.75rem;
+}
+
+.schema-preview-link {
+  color: var(--color-steel);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.schema-preview-link:hover {
+  text-decoration: underline;
+}
+
+.preview-dialog {
+  width: min(960px, calc(100vw - 32px));
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-white);
+  box-shadow: var(--shadow);
+  color: var(--color-ink);
+}
+
+.preview-dialog::backdrop {
+  background: rgb(11 37 69 / 0.4);
+}
+
+.preview-dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.preview-dialog h2 {
+  margin: 0;
+}
+
+.preview-dialog p {
+  margin: 0;
+}
+
+.preview-dialog .column-legend {
+  margin-bottom: var(--space-3);
+}
+
+@media (max-width: 900px) {
+  .query-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* On narrow screens the tables come first, so they are seen before writing. */
+  .schema-browser {
+    order: -1;
+    max-height: 18rem;
+  }
+}
+
+/* Collapsed SQL editor: a quiet way in for people who would rather write SQL themselves. */
+.editor-toggle {
+  margin: 0;
+}
+
+.editor-toggle button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-steel);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editor-toggle button:hover {
+  text-decoration: underline;
+}
+
+.editor-toggle button:focus-visible {
+  outline: 3px solid var(--color-amber);
+  outline-offset: 2px;
 }

@@ -4,7 +4,7 @@ import { allColumns, type TrackedTables } from './sampleTables'
 
 // all: every column of every table, including ones added to the database later.
 // on-demand: start empty; creating an analysis starts tracking the columns its query uses.
-// custom: exactly the tables and columns picked under Advanced options.
+// custom: exactly the tables and columns picked on the custom selection page or in settings.
 export type TrackingMode = 'all' | 'on-demand' | 'custom'
 
 export type SnapshotFrequency = 'daily' | 'weekly' | 'monthly'
@@ -59,7 +59,7 @@ export type TrackedDatabase = {
 // Details entered on the New Database page, before settings are chosen.
 export type DatabaseDraft = Pick<TrackedDatabase, 'name' | 'engine' | 'host' | 'username'>
 
-// Sent from the simple Step 2 page to Advanced options, so timing chosen there carries over.
+// Sent from the simple Step 2 page to the custom selection page, so timing chosen there carries over.
 export type NewDatabaseState = DatabaseDraft & Partial<Pick<TrackedDatabase, 'frequency' | 'retention'>>
 
 export type SnapshotSettings = Pick<TrackedDatabase, 'frequency' | 'retention' | 'trackingMode' | 'trackedTables'>
@@ -153,49 +153,6 @@ const sampleTrackedTables: TrackedTables = {
 }
 
 export const initialDatabases: TrackedDatabase[] = [
-  {
-    id: 'gcc-students',
-    name: 'GCC Student Database',
-    engine: 'PostgreSQL',
-    host: 'students.db.gcc.edu',
-    username: 'motus_reader',
-    frequency: 'monthly',
-    retention: 'forever',
-    trackingMode: 'custom',
-    trackedTables: sampleTrackedTables,
-    snapshotCount: 50,
-    lastSnapshotAt: '2026-09-01T06:00:00Z',
-    analyses: [
-      {
-        id: 'cs-retention',
-        typeId: 'retention',
-        title: 'CS Retention Rate',
-        unit: '%',
-        points: series([41, 38, 33, 29, 24, 20, 35, 33]),
-      },
-      {
-        id: 'enrollment',
-        typeId: 'record-count',
-        title: 'Total Students',
-        unit: '',
-        points: series([2390, 2310, 2295, 2380, 2425, 2470, 2488, 2512]),
-      },
-      {
-        id: 'major-changes',
-        typeId: 'change-count',
-        title: 'Major Changes per Year',
-        unit: '',
-        points: series([142, 158, 171, 166, 190, 203, 176, 184]),
-      },
-      {
-        id: 'business-analytics-share',
-        typeId: 'category-share',
-        title: 'Students Leaving CS for Business Analytics',
-        unit: '%',
-        points: series([31, 35, 38, 41, 44, 47, 50, 50]),
-      },
-    ],
-  },
   {
     id: 'partner-college-a',
     name: 'Partner College A',

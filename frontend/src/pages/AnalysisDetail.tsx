@@ -1,6 +1,6 @@
 import { useParams } from 'react-router'
 import LineChart from '../components/LineChart'
-import { analysisTypes, formatValue, type TrackedDatabase } from '../data/mockData'
+import { analysisTypes, formatValue, frequencyLabels, type TrackedDatabase } from '../data/mockData'
 import NotFound from './NotFound'
 
 function AnalysisDetail({ databases }: { databases: TrackedDatabase[] }) {
@@ -28,48 +28,58 @@ function AnalysisDetail({ databases }: { databases: TrackedDatabase[] }) {
       </div>
       {type && <p className="muted">{type.description}</p>}
 
-      <div className="stack">
-        <div className="stats">
-          {summary.map((item) => (
-            <div className="stat" key={item.label}>
-              <span className="stat-label">{item.label}</span>
-              <span className="stat-value">{formatValue(item.value, analysis.unit)}</span>
-            </div>
-          ))}
+      {analysis.points.length === 0 ? (
+        <div className="panel empty-state">
+          <h3>No data yet</h3>
+          <p className="muted">
+            This analysis fills in as snapshots are taken. The first one runs on the{' '}
+            {frequencyLabels[database.frequency].toLowerCase()} schedule.
+          </p>
         </div>
-
-        <section className="panel">
-          <h2>Over Time</h2>
-          <LineChart analysis={analysis} />
-        </section>
-
-        <section className="panel">
-          <h2>Data</h2>
-          <div className="table-wrap">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Year</th>
-                  <th>Value</th>
-                  <th>Change</th>
-                </tr>
-              </thead>
-              <tbody>
-                {analysis.points.map((point, i) => {
-                  const change = i === 0 ? null : point.value - analysis.points[i - 1].value
-                  return (
-                    <tr key={point.label}>
-                      <td>{point.label}</td>
-                      <td>{formatValue(point.value, analysis.unit)}</td>
-                      <td>{change === null ? '—' : `${change > 0 ? '+' : ''}${change.toLocaleString()}`}</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+      ) : (
+        <div className="stack">
+          <div className="stats">
+            {summary.map((item) => (
+              <div className="stat" key={item.label}>
+                <span className="stat-label">{item.label}</span>
+                <span className="stat-value">{formatValue(item.value, analysis.unit)}</span>
+              </div>
+            ))}
           </div>
-        </section>
-      </div>
+
+          <section className="panel">
+            <h2>Over Time</h2>
+            <LineChart analysis={analysis} />
+          </section>
+
+          <section className="panel">
+            <h2>Data</h2>
+            <div className="table-wrap">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Value</th>
+                    <th>Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analysis.points.map((point, i) => {
+                    const change = i === 0 ? null : point.value - analysis.points[i - 1].value
+                    return (
+                      <tr key={point.label}>
+                        <td>{point.label}</td>
+                        <td>{formatValue(point.value, analysis.unit)}</td>
+                        <td>{change === null ? '—' : `${change > 0 ? '+' : ''}${change.toLocaleString()}`}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   )
 }

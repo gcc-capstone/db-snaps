@@ -41,7 +41,7 @@ function SqlAssistant({ onUseQuery }: { onUseQuery: (sql: string) => void }) {
 
   return (
     <div className="assistant">
-      <h2>Ask the assistant</h2>
+      <h2>Describe what you want to see, and we'll write the query</h2>
       <label htmlFor="assistant-input" className="visually-hidden">Message to the assistant</label>
 
       {(messages.length > 0 || thinking) && (
@@ -85,10 +85,12 @@ function SqlAssistant({ onUseQuery }: { onUseQuery: (sql: string) => void }) {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Describe the analysis you want and the assistant will write the SQL"
+          placeholder="Describe the analysis you want in plain English"
           autoComplete="off"
+          // The assistant is the main way to start, so the cursor starts here.
+          autoFocus
         />
-        <button type="button" className="btn btn-secondary" onClick={send} disabled={!draft.trim() || thinking}>
+        <button type="button" className="btn btn-primary" onClick={send} disabled={!draft.trim() || thinking}>
           Send
         </button>
       </div>

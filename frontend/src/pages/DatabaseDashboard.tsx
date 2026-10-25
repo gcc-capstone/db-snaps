@@ -53,15 +53,17 @@ function AnalysisCard({ analysis }: { analysis: Analysis }) {
     <Link to={`analyses/${analysis.id}`} className="card card-link analysis-card">
       <span className="badge">{typeName}</span>
       <h3>{analysis.title}</h3>
-      {latest && (
+      {latest ? (
         <>
           <span className="stat-value">{formatValue(latest.value, unit)}</span>
           <span className="muted small">
             {changeText} since {previous?.label}
           </span>
+          <Sparkline points={points} />
         </>
+      ) : (
+        <p className="muted small">No data yet. Values appear after the first snapshot.</p>
       )}
-      <Sparkline points={points} />
       <span className="card-action">View data →</span>
     </Link>
   )
