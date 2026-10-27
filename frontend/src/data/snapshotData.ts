@@ -97,7 +97,7 @@ export function getSnapshots(database: TrackedDatabase): Snapshot[] {
   return database.snapshots ?? generateSnapshots(database)
 }
 
-// What the "Take Snapshot Now" button adds.
+// What the "Add Snapshot" button adds.
 export function createManualSnapshot(database: TrackedDatabase, now: Date = new Date()): Snapshot {
   return makeSnapshot(database, database.snapshotCount + 1, now, 'manual', false)
 }
