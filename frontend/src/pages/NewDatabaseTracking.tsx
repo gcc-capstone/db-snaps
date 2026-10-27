@@ -1,29 +1,30 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import type { DatabaseActions } from '../App'
+import DiscardSetupButton from '../components/DiscardSetupButton'
 import SnapshotTimingFields from '../components/SnapshotTimingFields'
 import TrackingModeOptions from '../components/TrackingModeOptions'
 import {
   createDatabase,
   trackedTablesFor,
-  type DatabaseDraft,
   type NewDatabaseState,
   type SnapshotFrequency,
   type SnapshotRetention,
   type TrackingMode,
 } from '../data/mockData'
 
-// Step 2 of adding a database: pick one of the two simple tracking options, or go to Advanced options.
+// Step 2 of adding a database: pick one of the two simple tracking options, or go to a custom selection.
 function NewDatabaseTracking({ onCreate }: DatabaseActions) {
   const navigate = useNavigate()
-  const draft = useLocation().state as DatabaseDraft | null
+  // Coming back from the custom selection page also carries the timing chosen there.
+  const draft = useLocation().state as NewDatabaseState | null
   const [mode, setMode] = useState<Exclude<TrackingMode, 'custom'>>('all')
-  const [frequency, setFrequency] = useState<SnapshotFrequency>('monthly')
-  const [retention, setRetention] = useState<SnapshotRetention>('forever')
+  const [frequency, setFrequency] = useState<SnapshotFrequency>(draft?.frequency ?? 'monthly')
+  const [retention, setRetention] = useState<SnapshotRetention>(draft?.retention ?? 'forever')
 
   if (!draft) return <Navigate to="/databases/new" replace />
 
-  const advancedState: NewDatabaseState = { ...draft, frequency, retention }
+  const customState: NewDatabaseState = { ...draft, frequency, retention }
 
   const handleCreate = (event: FormEvent) => {
     event.preventDefault()
@@ -47,8 +48,7 @@ function NewDatabaseTracking({ onCreate }: DatabaseActions) {
           <h2>What to Track</h2>
           <TrackingModeOptions value={mode} onChange={setMode} isNew />
           <p className="small">
-            <Link to="/databases/new/advanced" state={advancedState}>Advanced options</Link>
-            <span className="muted"> · choose specific tables and columns</span>
+            <Link to="/databases/new/custom" state={customState}>Choose specific tables and columns</Link>
           </p>
         </section>
 
@@ -61,7 +61,7 @@ function NewDatabaseTracking({ onCreate }: DatabaseActions) {
 
         <div className="row save-bar">
           <button type="submit" className="btn btn-primary">Create Database</button>
-          <Link to="/" className="btn btn-secondary">Cancel</Link>
+          <DiscardSetupButton databaseName={draft.name} />
         </div>
       </form>
     </main>
