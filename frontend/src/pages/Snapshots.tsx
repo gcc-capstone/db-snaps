@@ -54,7 +54,7 @@ function Snapshots({ databases }: { databases: TrackedDatabase[] }) {
         </div>
       </div>
       <p className="muted summary-line">
-        {frequencyLabels[database.frequency]} schedule · times shown in UTC · use Take Snapshot Now in the sidebar to add one by hand
+        {frequencyLabels[database.frequency]} schedule · times shown in UTC · use Add Snapshot in the sidebar to add one by hand
       </p>
 
       <div className="stack">
@@ -70,7 +70,7 @@ function Snapshots({ databases }: { databases: TrackedDatabase[] }) {
         {all.length === 0 ? (
           <div className="panel empty-state">
             <h3>No snapshots yet</h3>
-            <p className="muted">Use Take Snapshot Now in the sidebar to capture the first one.</p>
+            <p className="muted">Use Add Snapshot in the sidebar to capture the first one.</p>
           </div>
         ) : (
           <section className="panel">

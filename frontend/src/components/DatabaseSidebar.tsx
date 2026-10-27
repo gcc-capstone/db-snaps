@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router'
 import { formatDate, frequencyLabels, type TrackedDatabase } from '../data/mockData'
 import { createManualSnapshot, getSnapshots } from '../data/snapshotData'
@@ -42,7 +42,7 @@ const icons = {
 }
 
 // Persistent left navigation for everything inside one database.
-// The snapshot button is fake: after a short wait it adds a manual snapshot to the history.
+// The Add Snapshot button is fake: after a short wait it adds a manual snapshot to the history.
 function DatabaseSidebar({
   database,
   onUpdate,
@@ -52,21 +52,28 @@ function DatabaseSidebar({
 }) {
   const [taking, setTaking] = useState(false)
   const [lastTaken, setLastTaken] = useState<number | null>(null)
+  // The confirmation clears itself a few seconds after the snapshot completes.
+  useEffect(() => {
+    if (lastTaken === null) return
+    const timer = window.setTimeout(() => setLastTaken(null), 3000)
+    return () => window.clearTimeout(timer)
+  }, [lastTaken])
+
   const path = useLocation().pathname.replace(/\/$/, '')
   const base = `/databases/${database.id}`
 
-  const items: NavItem[] = [
-    {
-      to: base,
-      label: 'Dashboard',
-      icon: icons.dashboard,
-      active: path === base,
-    },
-    { to: `${base}/snapshots`, label: 'Snapshots', icon: icons.snapshots, active: path.startsWith(`${base}/snapshots`) },
+  const analysisItems: NavItem[] = [
+    { to: base, label: 'View Analyses', icon: icons.dashboard, active: path === base },
     { to: `${base}/analyses/new`, label: 'Add Analysis', icon: icons.add, active: path === `${base}/analyses/new` },
   ]
-  // Pinned to the bottom of the sidebar, apart from the everyday pages.
-  const settings: NavItem = { to: `${base}/settings`, label: 'Settings', icon: icons.settings, active: path === `${base}/settings` }
+  const viewSnapshots: NavItem = {
+    to: `${base}/snapshots`,
+    label: 'View Snapshots',
+    icon: icons.snapshots,
+    active: path.startsWith(`${base}/snapshots`),
+  }
+  // Settings belong to the database itself, so the gear sits beside its name.
+  const settingsActive = path === `${base}/settings`
 
   const navLink = (item: NavItem) => (
     <Link
@@ -98,17 +105,29 @@ function DatabaseSidebar({
   return (
     <aside className="sidebar" aria-label={`${database.name} navigation`}>
       <div className="sidebar-db">
-        <span className="sidebar-db-name">{database.name}</span>
+        <div className="sidebar-db-header">
+          <span className="sidebar-db-name">{database.name}</span>
+          <Link
+            to={`${base}/settings`}
+            className={settingsActive ? 'sidebar-db-settings sidebar-db-settings-active' : 'sidebar-db-settings'}
+            aria-current={settingsActive ? 'page' : undefined}
+            aria-label={`${database.name} settings`}
+            title="Database settings"
+          >
+            {icons.settings}
+          </Link>
+        </div>
         <span className="sidebar-db-engine">{database.engine}</span>
         <code className="sidebar-db-host">{database.host}</code>
       </div>
 
       <nav aria-label={`${database.name} sections`}>
-        <ul className="sidebar-links">
-          {items.map((item) => (
+        <h2 className="sidebar-group-heading" id="sidebar-analyses">Analyses</h2>
+        <ul className="sidebar-links" aria-labelledby="sidebar-analyses">
+          {analysisItems.map((item) => (
             <li key={item.to}>
               {navLink(item)}
-              {/* Each analysis is listed under Dashboard, so the one being viewed shows as the current page. */}
+              {/* Each analysis is listed under View Analyses, so the one being viewed shows as the current page. */}
               {item.to === base && database.analyses.length > 0 && (
                 <ul className="sidebar-sublinks">
                   {database.analyses.map((analysis) => {
@@ -132,6 +151,23 @@ function DatabaseSidebar({
             </li>
           ))}
         </ul>
+
+        <h2 className="sidebar-group-heading" id="sidebar-snapshots">Snapshots</h2>
+        <ul className="sidebar-links" aria-labelledby="sidebar-snapshots">
+          <li>{navLink(viewSnapshots)}</li>
+          <li>
+            <button type="button" className="sidebar-link sidebar-link-button" onClick={takeSnapshot} disabled={taking}>
+              {icons.record}
+              {taking ? 'Adding snapshot…' : 'Add Snapshot'}
+            </button>
+          </li>
+        </ul>
+
+        {lastTaken !== null && (
+          <p className="sidebar-status" role="status">
+            Snapshot #{lastTaken} complete. <Link to={`${base}/snapshots`}>View</Link>
+          </p>
+        )}
       </nav>
 
       <div className="sidebar-footer">
@@ -149,22 +185,7 @@ function DatabaseSidebar({
             <dd>{database.lastSnapshotAt ? formatDate(database.lastSnapshotAt) : '—'}</dd>
           </div>
         </dl>
-
-        <button type="button" className="sidebar-action" onClick={takeSnapshot} disabled={taking}>
-          {icons.record}
-          {taking ? 'Taking snapshot…' : 'Take Snapshot Now'}
-        </button>
-
-        {lastTaken !== null && (
-          <p className="sidebar-status" role="status">
-            Snapshot #{lastTaken} complete. <Link to={`${base}/snapshots`}>View</Link>
-          </p>
-        )}
       </div>
-
-      <nav className="sidebar-settings" aria-label={`${database.name} settings`}>
-        {navLink(settings)}
-      </nav>
     </aside>
   )
 }
