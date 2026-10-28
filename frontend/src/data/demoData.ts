@@ -3,6 +3,7 @@
 // so the analyses created live have a story to show.
 
 import type { Analysis, DataPoint, TrackedDatabase } from './mockData'
+import type { AssistantReply } from './sqlTools'
 
 const yearsAhead = 5
 
@@ -23,7 +24,7 @@ function otherSeries(analysis: Analysis, count: number): number[] {
 }
 
 function snapshotsPerYear(database: TrackedDatabase): number {
-  return { daily: 365, weekly: 52, monthly: 12 }[database.frequency]
+  return { daily: 365, weekly: 52, monthly: 12, yearly: 1 }[database.frequency]
 }
 
 // One point per year, from the year the database was added to `yearsAhead` years later.
@@ -41,9 +42,22 @@ export function jumpToFuture(database: TrackedDatabase, now: Date = new Date()):
   return {
     ...database,
     analyses,
-    snapshotCount: snapshotsPerYear(database) * yearsAhead,
+    // Counts the first snapshot, taken when the database was added, so yearly matches the chart's points.
+    snapshotCount: snapshotsPerYear(database) * yearsAhead + 1,
     lastSnapshotAt: lastSnapshot.toISOString(),
     // Drop any snapshots taken by hand during the demo, so the generated history is shown instead.
     snapshots: undefined,
   }
+}
+
+// The assistant's only answer during the presentation, whatever is typed. Matches the fake students table,
+// where status is stored as 'Active'.
+export const demoReply: AssistantReply = {
+  text: 'This calculates the percent of Computer Science students who are still active at each yearly snapshot, so you can see how retention changes over the years.',
+  sql: `SELECT snapshot_year AS label,
+       ROUND(100.0 * SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) / COUNT(*), 1) AS value
+FROM students
+WHERE major = 'Computer Science'
+GROUP BY snapshot_year
+ORDER BY snapshot_year;`,
 }

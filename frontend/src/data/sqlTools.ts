@@ -117,7 +117,7 @@ export function generateReply(userMessages: string[]): AssistantReply {
         text: `This calculates the percent of ${name} students who are still active at each snapshot${yearNote}.${major ? '' : ' I assumed Computer Science; tell me if you meant another major.'}`,
         sql: buildQuery(
           'snapshot_year',
-          "ROUND(100.0 * SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) / COUNT(*), 1)",
+          "ROUND(100.0 * SUM(CASE WHEN status = 'Active' THEN 1 ELSE 0 END) / COUNT(*), 1)",
           'students',
           [`major = '${name}'`, ...since('snapshot_year')],
           'snapshot_year',
