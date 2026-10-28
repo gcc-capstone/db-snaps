@@ -81,7 +81,8 @@ export function generateSnapshots(database: TrackedDatabase): Snapshot[] {
   for (let i = 0; i < database.snapshotCount; i++) {
     const number = database.snapshotCount - i
     const takenAt = new Date(last)
-    if (database.frequency === 'monthly') takenAt.setUTCMonth(last.getUTCMonth() - i)
+    if (database.frequency === 'yearly') takenAt.setUTCFullYear(last.getUTCFullYear() - i)
+    else if (database.frequency === 'monthly') takenAt.setUTCMonth(last.getUTCMonth() - i)
     else takenAt.setUTCDate(last.getUTCDate() - i * (database.frequency === 'weekly' ? 7 : 1))
 
     const manual = i > 0 && (seed + number) % 9 === 0

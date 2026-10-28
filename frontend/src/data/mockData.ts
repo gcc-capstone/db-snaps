@@ -7,7 +7,7 @@ import { allColumns, type TrackedTables } from './sampleTables'
 // custom: exactly the tables and columns picked on the custom selection page or in settings.
 export type TrackingMode = 'all' | 'on-demand' | 'custom'
 
-export type SnapshotFrequency = 'daily' | 'weekly' | 'monthly'
+export type SnapshotFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly'
 
 // How long a snapshot is kept before it is deleted (its TTL).
 export type SnapshotRetention = '3-months' | '6-months' | '1-year' | '2-years' | '5-years' | 'forever'
@@ -85,6 +85,7 @@ export const frequencyLabels: Record<SnapshotFrequency, string> = {
   daily: 'Daily',
   weekly: 'Weekly',
   monthly: 'Monthly',
+  yearly: 'Yearly',
 }
 
 export const retentionLabels: Record<SnapshotRetention, string> = {

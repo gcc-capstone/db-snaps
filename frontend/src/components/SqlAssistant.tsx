@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
-import { generateReply } from '../data/sqlTools'
+import { demoReply } from '../data/demoData'
 
 type Message = { id: number; role: 'user' | 'assistant'; text: string; sql?: string }
 
-// Prototype only: replies come from canned logic in sqlTools.ts, not a real AI.
+// Prototype only: for the presentation every reply is the hard-wired demoReply (demoData.ts), not a real AI.
+// Switch back to generateReply in sqlTools.ts for the canned replies that react to what is typed.
 // Not a <form>: it sits inside the query form, so Enter is handled manually.
 function SqlAssistant({ onUseQuery }: { onUseQuery: (sql: string) => void }) {
   const [messages, setMessages] = useState<Message[]>([])
@@ -25,9 +26,8 @@ function SqlAssistant({ onUseQuery }: { onUseQuery: (sql: string) => void }) {
     setMessages(next)
     setDraft('')
     setThinking(true)
-    const userTexts = next.filter((m) => m.role === 'user').map((m) => m.text)
-    window.setTimeout(() => {
-      setMessages((current) => [...current, { id: nextId.current++, role: 'assistant', ...generateReply(userTexts) }])
+        window.setTimeout(() => {
+      setMessages((current) => [...current, { id: nextId.current++, role: 'assistant', ...demoReply }])
       setThinking(false)
     }, 800)
   }
